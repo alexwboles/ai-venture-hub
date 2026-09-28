@@ -14,8 +14,8 @@ const assert = require("assert");
 
 // Flow 1: hub definitions — exact slugs, names, non-empty blurbs
 flow("hub definitions", () => {
-  const names = { "trades-hub": "Trades Growth Stack", "growth-hub": "Customer Growth Kit",
-                  "ops-hub": "Back-Office OS", "life-hub": "Personal Life OS" };
+  const names = { "trades-hub": "Trades Hub", "growth-hub": "Growth Hub",
+                  "ops-hub": "Ops Hub", "life-hub": "Life Hub" };
   assert.strictEqual(HUB.HUBS.length, 4, "hub count");
   HUB.HUBS.forEach(h => {
     assert.strictEqual(h.name, names[h.slug], "name for " + h.slug);
@@ -24,9 +24,9 @@ flow("hub definitions", () => {
   });
 });
 
-// Flow 2: hub membership — trades 4 / growth 3 / ops 3 / life 5, each product once
+// Flow 2: hub membership — trades 6 / growth 9 / ops 10 / life 29, each product once
 flow("hub membership", () => {
-  const counts = { "trades-hub": 4, "growth-hub": 3, "ops-hub": 3, "life-hub": 5 };
+  const counts = { "trades-hub": 6, "growth-hub": 9, "ops-hub": 10, "life-hub": 29 };
   const seen = new Set();
   HUB.HUBS.forEach(h => {
     assert.strictEqual(h.members.length, counts[h.slug], "member count " + h.slug);
@@ -36,7 +36,7 @@ flow("hub membership", () => {
       seen.add(sl);
     });
   });
-  assert.strictEqual(seen.size, 15, "all 15 products assigned");
+  assert.strictEqual(seen.size, 54, "all 54 products assigned");
 });
 
 // Flow 3: PRODUCTS list is alphabetical by name (the compact A–Z list)
