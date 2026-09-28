@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Venture Hub — 15 AI micro-products, one front door</title>
-<meta name="description" content="One dashboard uniting 15 free-to-run AI micro-products for business and personal life, built in a single night.">
+<title>AI Venture Hub — a portfolio of independent AI micro-products</title>
+<meta name="description" content="A portfolio of 15 free-to-run AI micro-products for business and personal life, built in a single night. Each stands alone; a few bundle naturally.">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,32 +12,27 @@
 <header class="hero">
   <div class="wrap">
     <h1>AI Venture <span class="spark">Hub</span></h1>
-    <p class="sub">15 AI micro-products, built in one night, free to run. Real tools for real businesses and real life — every one local-first, no paid APIs required. Pick one, or grab a stack.</p>
+    <p class="sub">A portfolio of <b>independent</b> AI micro-products, built in one night, free to run. Each tool solves one problem for one kind of user — no forced bundles, no artificial mega-suite. A few combine naturally; the rest stand proudly alone.</p>
     <div class="stats">
-      <div class="stat"><b>15</b><span>AI micro-products</span></div>
-      <div class="stat"><b id="biz-count">10</b><span>for business</span></div>
-      <div class="stat"><b id="per-count">5</b><span>for personal life</span></div>
-      <div class="stat"><b id="total-value">$271/mo</b><span>value if bought separately</span></div>
+      <div class="stat"><b id="prod-count">15</b><span>AI micro-products</span></div>
+      <div class="stat"><b id="cluster-count">4</b><span>natural clusters</span></div>
+      <div class="stat"><b>0</b><span>forced bundles</span></div>
     </div>
   </div>
 </header>
 
 <main class="wrap">
   <div class="toolbar">
-    <input id="search" type="search" placeholder="Search products… (try “quote”, “gift”, “email”)" aria-label="Search products">
-    <div class="chips">
-      <button class="chip active" data-cat="all">All</button>
-      <button class="chip" data-cat="business">Business</button>
-      <button class="chip" data-cat="personal">Personal</button>
-    </div>
+    <input id="search" type="search" placeholder="Search products… (try “quote”, “gift”, “SOP”)" aria-label="Search products">
+    <div class="chips" id="chips"></div>
   </div>
   <p id="count"></p>
-  <section id="grid" class="grid" aria-label="Products"></section>
+  <div id="clusters"></div>
 
   <section class="stacks-sec">
     <div class="wrap">
-      <h2>Stacks — products that work better together</h2>
-      <p class="lede">Alex's rule: connect ideas when it's beneficial. These bundles combine multiple products into one workflow.</p>
+      <h2>Stacks — the few combinations that genuinely work as one workflow</h2>
+      <p class="lede">Most products here are best on their own. These are the exceptions: bundles where the products share a customer and a workflow. Each one says exactly why it goes together — if the reason ever stops being true, the stack goes away.</p>
       <div id="stacks" class="stack-grid"></div>
     </div>
   </section>
@@ -45,9 +40,12 @@
 
 <section class="about">
   <div class="wrap">
-    <h2>Why a hub?</h2>
-    <p class="lede">Fifteen separate repos are hard to browse. This page is the single front door: search everything, filter by business or personal, and discover stacks — curated bundles where 2–4 products solve one bigger problem together. Every product is:</p>
+    <h2>The philosophy</h2>
+    <p class="lede">Connect ideas only where it makes sense. A portfolio of independent products with a few natural bundles beats one artificial mega-product. So:</p>
     <ul>
+      <li><b>Independent by default</b> — every product solves one problem for one kind of user, and works fully on its own.</li>
+      <li><b>Clusters are for browsing</b> — they group products that serve similar users, nothing more.</li>
+      <li><b>Stacks must earn it</b> — a bundle only exists if the products share a real workflow and a real customer.</li>
       <li><b>Free to run</b> — no paid services, no required API keys. AI works locally; an OpenAI key is optional polish, never a requirement.</li>
       <li><b>Local-first</b> — your data stays in your browser or on your machine.</li>
       <li><b>Tested</b> — every repo ships with smoke + end-to-end tests, all green.</li>
