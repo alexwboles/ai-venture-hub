@@ -1,38 +1,41 @@
-# AI Venture Hub
+# Alex's AI Micro-Products
 
-A **portfolio** of **15 independent AI micro-products** — built in a single overnight sprint, all free to run, all local-first.
+Independent tools, each free to run. Grouped into logical hubs where they belong together.
 
-## The concept (revised)
+## Hubs
 
-These products do *not* all belong together — and that's the point. Each one solves one problem for one kind of user and works fully on its own. This page is the portfolio front door: browse by **cluster** (products that serve similar users), and find the few **stacks** (bundles that genuinely share a workflow).
+| Hub | What it is | Products |
+|-----|-----------|----------|
+| [Trades Growth Stack](https://github.com/alexwboles/trades-hub) | Quoting, invoicing, reviews and social posts for field-service businesses. | quotely-ai · invoicepilot-ai · reviewpilot-ai · socialspark-ai |
+| [Customer Growth Kit](https://github.com/alexwboles/growth-hub) | Win customers and win them back: leads, lapsed buyers, and restaurant menus. | leadqualify-ai · winback-ai · menucraft-ai |
+| [Back-Office OS](https://github.com/alexwboles/ops-hub) | The inside of the business: SOPs, hiring, and the inbox. | sopforge-ai · hirewise-ai · triagepilot-ai |
+| [Personal Life OS](https://github.com/alexwboles/life-hub) | Household, money, and personal goals — practical tools for real life. | nestlife-ai · budgetlens-ai · homekeeper-ai · studyflow-ai · giftgenius-ai |
 
-**Philosophy:** connect ideas only where it makes sense. A portfolio of independent products with a few natural bundles beats one artificial mega-product.
+## All products (A–Z)
 
-## The 4 clusters
-
-- **Trades & Field Services** ($91/mo combined) — quotely-ai · invoicepilot-ai · reviewpilot-ai · socialspark-ai
-- **Marketing & Growth** ($82/mo combined) — leadqualify-ai · winback-ai · menucraft-ai
-- **Team & Operations** ($68/mo combined) — sopforge-ai · hirewise-ai · triagepilot-ai
-- **Personal Life** ($30/mo combined) — nestlife-ai · budgetlens-ai · homekeeper-ai · studyflow-ai · giftgenius-ai
-
-All live at `https://github.com/alexwboles/<slug>`.
-
-## Stacks — only where they earn it
-
-- **Trades Growth Stack** — quotely + invoicepilot + reviewpilot + socialspark. *Why:* one customer, one workflow — the quote becomes the invoice, the finished job becomes the review and the social post.
-- **Inbox Command** — triagepilot + leadqualify. *Why:* every inbound message, email or website chat, gets triaged and answered; nothing slips through.
-- **Family OS** — nestlife + budgetlens + homekeeper + giftgenius. *Why:* one household, one calm system — dinners, spending, maintenance and occasions planned in one place.
-- **Run the Team** — sopforge + hirewise. *Why:* document how the work gets done, then hire people into a system that already exists.
-
-(Dropped: the old "Solo Founder Kit" — SOPs + hiring + win-back + restaurant menus never formed one workflow. Forced bundles are worse than none.)
+- [BudgetLens](https://github.com/alexwboles/budgetlens-ai) — Upload your bank CSV. See where your money actually goes.
+- [GiftGenius](https://github.com/alexwboles/giftgenius-ai) — Never panic-buy a gift again.
+- [HireWise](https://github.com/alexwboles/hirewise-ai) — Better job posts, smarter shortlists.
+- [HomeKeeper](https://github.com/alexwboles/homekeeper-ai) — Your home's maintenance schedule, handled.
+- [InvoicePilot](https://github.com/alexwboles/invoicepilot-ai) — Invoices that get paid — and polite nudges when they don't.
+- [LeadQualify](https://github.com/alexwboles/leadqualify-ai) — A chat widget that scores your website leads while you sleep.
+- [MenuCraft](https://github.com/alexwboles/menucraft-ai) — Menus that make mouths water — with margins that make sense.
+- [NestLife](https://github.com/alexwboles/nestlife-ai) — Meals, groceries, bills and chores — one calm place.
+- [Quotely](https://github.com/alexwboles/quotely-ai) — Describe the job, get a professional quote in seconds.
+- [ReviewPilot](https://github.com/alexwboles/reviewpilot-ai) — More 5-star reviews, replies written in seconds.
+- [SocialSpark](https://github.com/alexwboles/socialspark-ai) — One job photo → a full week of social posts.
+- [SOPForge](https://github.com/alexwboles/sopforge-ai) — Plain-English description → step-by-step SOP checklist.
+- [StudyFlow](https://github.com/alexwboles/studyflow-ai) — Spaced-repetition exam prep that actually sticks.
+- [TriagePilot](https://github.com/alexwboles/triagepilot-ai) — Your inbox, sorted: urgent first, replies drafted.
+- [WinBack](https://github.com/alexwboles/winback-ai) — Turn your dead customer list into revenue again.
 
 ## Principles (every product)
 
-1. **Independent by default** — solves one problem, works fully on its own.
+1. **Independent** — each solves one problem for one kind of user, and works fully on its own.
 2. **Free to run** — no paid services; AI works locally, an OpenAI key is optional polish.
 3. **Local-first** — data stays in the browser / on the machine.
 4. **Tested** — smoke + e2e tests, green before ship.
-5. **Open** — public repos, linked from every card.
+5. **Open** — public repos, linked above.
 
 ## Run it
 
