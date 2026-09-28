@@ -1,32 +1,38 @@
 # AI Venture Hub
 
-One dashboard uniting **15 AI micro-products** — built in a single overnight sprint, all free to run, all local-first.
+A **portfolio** of **15 independent AI micro-products** — built in a single overnight sprint, all free to run, all local-first.
 
-## The concept
+## The concept (revised)
 
-Fifteen separate repos are hard to browse. This hub is the single front door:
+These products do *not* all belong together — and that's the point. Each one solves one problem for one kind of user and works fully on its own. This page is the portfolio front door: browse by **cluster** (products that serve similar users), and find the few **stacks** (bundles that genuinely share a workflow).
 
-- **Search + filter** — find any product, filter Business / Personal.
-- **Stacks** — curated bundles where 2–4 products solve one bigger problem together:
-  - **Trades Growth Stack** — quotely + invoicepilot + reviewpilot + socialspark (the full job-to-referral loop)
-  - **Inbox Command** — triagepilot + leadqualify (never miss a lead or urgent email)
-  - **Family OS** — nestlife + budgetlens + homekeeper + giftgenius (household on autopilot)
-  - **Solo Founder Kit** — sopforge + hirewise + winback + menucraft (run a one-person business)
-- **Total value counter** — $271/mo if bought separately.
+**Philosophy:** connect ideas only where it makes sense. A portfolio of independent products with a few natural bundles beats one artificial mega-product.
 
-## The 15 products
+## The 4 clusters
 
-Business: quotely-ai · reviewpilot-ai · socialspark-ai · triagepilot-ai · invoicepilot-ai · leadqualify-ai · sopforge-ai · hirewise-ai · winback-ai · menucraft-ai
-Personal: nestlife-ai · budgetlens-ai · homekeeper-ai · studyflow-ai · giftgenius-ai
+- **Trades & Field Services** ($91/mo combined) — quotely-ai · invoicepilot-ai · reviewpilot-ai · socialspark-ai
+- **Marketing & Growth** ($82/mo combined) — leadqualify-ai · winback-ai · menucraft-ai
+- **Team & Operations** ($68/mo combined) — sopforge-ai · hirewise-ai · triagepilot-ai
+- **Personal Life** ($30/mo combined) — nestlife-ai · budgetlens-ai · homekeeper-ai · studyflow-ai · giftgenius-ai
 
 All live at `https://github.com/alexwboles/<slug>`.
 
+## Stacks — only where they earn it
+
+- **Trades Growth Stack** — quotely + invoicepilot + reviewpilot + socialspark. *Why:* one customer, one workflow — the quote becomes the invoice, the finished job becomes the review and the social post.
+- **Inbox Command** — triagepilot + leadqualify. *Why:* every inbound message, email or website chat, gets triaged and answered; nothing slips through.
+- **Family OS** — nestlife + budgetlens + homekeeper + giftgenius. *Why:* one household, one calm system — dinners, spending, maintenance and occasions planned in one place.
+- **Run the Team** — sopforge + hirewise. *Why:* document how the work gets done, then hire people into a system that already exists.
+
+(Dropped: the old "Solo Founder Kit" — SOPs + hiring + win-back + restaurant menus never formed one workflow. Forced bundles are worse than none.)
+
 ## Principles (every product)
 
-1. **Free to run** — no paid services; AI works locally, an OpenAI key is optional polish.
-2. **Local-first** — data stays in the browser / on the machine.
-3. **Tested** — smoke + e2e tests, green before ship.
-4. **Open** — public repos, linked from every card.
+1. **Independent by default** — solves one problem, works fully on its own.
+2. **Free to run** — no paid services; AI works locally, an OpenAI key is optional polish.
+3. **Local-first** — data stays in the browser / on the machine.
+4. **Tested** — smoke + e2e tests, green before ship.
+5. **Open** — public repos, linked from every card.
 
 ## Run it
 
