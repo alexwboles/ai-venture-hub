@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# smoke.sh — fast sanity checks for ai-venture-hub (portfolio framing)
+# smoke.sh — fast sanity checks for ai-venture-hub (minimal portfolio index)
 set -u
 cd "$(dirname "$0")/.."
 PASS=0; FAIL=0
@@ -19,48 +19,55 @@ node --check js/app.js 2>/dev/null && ok "app.js syntax" || bad "app.js syntax"
 node -e '
 const HUB = require("./js/data.js");
 const fs = require("fs");
-let n = 0;
-const t = (name, cond) => { n++; console.log((cond ? "PASS" : "FAIL") + ": " + name); if (!cond) process.exitCode = 1; };
+const t = (name, cond) => { console.log((cond ? "PASS" : "FAIL") + ": " + name); if (!cond) process.exitCode = 1; };
 
-t("15 products total", HUB.PRODUCTS.length === 15);
+const hubSlugs = ["trades-hub", "growth-hub", "ops-hub", "life-hub"];
+t("4 hubs defined", HUB.HUBS.length === 4);
+t("hub slugs are the 4 logical hubs", hubSlugs.every(s => HUB.HUBS.some(h => h.slug === s)));
+t("hub links well-formed", HUB.HUBS.every(h => HUB.hubUrl(h) === "https://github.com/alexwboles/" + h.slug));
+t("every hub has name + blurb", HUB.HUBS.every(h => h.name && h.blurb && h.blurb.length > 10));
+
 const slugs = ["quotely-ai","reviewpilot-ai","socialspark-ai","triagepilot-ai","invoicepilot-ai",
   "leadqualify-ai","sopforge-ai","hirewise-ai","winback-ai","menucraft-ai",
   "nestlife-ai","budgetlens-ai","homekeeper-ai","studyflow-ai","giftgenius-ai"];
+t("15 products total", HUB.PRODUCTS.length === 15);
 t("all 15 slugs present", slugs.every(s => HUB.PRODUCTS.some(p => p.slug === s)));
 t("repo links well-formed", HUB.PRODUCTS.every(p => HUB.repoUrl(p) === "https://github.com/alexwboles/" + p.slug));
-t("prices are non-negative numbers", HUB.PRODUCTS.every(p => typeof p.price === "number" && p.price >= 0));
-t("every product has name/tagline/3 features",
-  HUB.PRODUCTS.every(p => p.name && p.tagline && p.features.length >= 3));
+t("every product has name + one-line tagline",
+  HUB.PRODUCTS.every(p => p.name && p.tagline && p.tagline.length > 5));
+t("no bundle-math fields on products",
+  HUB.PRODUCTS.every(p => !("price" in p) && !("features" in p) && !("cluster" in p)));
 
-const ids = HUB.CLUSTERS.map(c => c.id);
-t("4 clusters defined", HUB.CLUSTERS.length === 4);
-t("every product in exactly one valid cluster",
-  HUB.PRODUCTS.every(p => typeof p.cluster === "string" && ids.filter(id => id === p.cluster).length === 1));
-t("every cluster has a name, short label and blurb",
-  HUB.CLUSTERS.every(c => c.name && c.short && c.blurb));
-t("no product still uses the old cat field", HUB.PRODUCTS.every(p => !("cat" in p)));
-t("no suite-wide totalMonthly helper (no fake bundle price)", typeof HUB.totalMonthly === "undefined");
+const counts = { "trades-hub": 4, "growth-hub": 3, "ops-hub": 3, "life-hub": 5 };
+t("hub member counts 4/3/3/5",
+  HUB.HUBS.every(h => h.members.length === counts[h.slug]));
+t("every hub member resolves to a real product",
+  HUB.HUBS.every(h => h.members.every(sl => HUB.productBySlug(sl))));
+const seen = {};
+let dup = false;
+HUB.HUBS.forEach(h => h.members.forEach(sl => { if (seen[sl]) dup = true; seen[sl] = 1; }));
+t("every product in exactly one hub", !dup && Object.keys(seen).length === 15);
 
-t("4 stacks defined", HUB.STACKS.length === 4);
-t("every stack product references a real slug",
-  HUB.STACKS.every(s => s.products.every(sl => HUB.PRODUCTS.some(p => p.slug === sl))));
-t("every stack has a one-line why-it-goes-together",
-  HUB.STACKS.every(s => typeof s.why === "string" && s.why.length > 20));
-t("forced Solo Founder Kit stack is gone",
-  !HUB.STACKS.some(s => s.slug === "solo-founder"));
+t("no leftover suite-era exports",
+  typeof HUB.STACKS === "undefined" && typeof HUB.CLUSTERS === "undefined" &&
+  typeof HUB.search === "undefined" && typeof HUB.totalMonthly === "undefined" &&
+  typeof HUB.clusterValue === "undefined" && typeof HUB.priceLabel === "undefined");
 
-t("priceLabel free vs paid", HUB.priceLabel({price:0}) === "Free" && HUB.priceLabel({price:24}) === "$24/mo");
+const html = fs.readFileSync("index.html", "utf8");
+t("page title names AI Micro-Products",
+  html.indexOf("<title>") !== -1 && html.indexOf("AI Micro-Products") !== -1);
+t("honest one-liner present", html.includes("Independent tools, each free to run. Grouped into logical hubs where they belong together."));
+t("index.html wires data.js + app.js (hubs render at runtime)",
+  html.indexOf("js/data.js") !== -1 && html.indexOf("js/app.js") !== -1 && /id="hubs"/.test(html));
+t("no $271 counter", !html.includes("$271"));
+t("no suite language", !/one suite|mega-suite|suite-wide|forced bundles/i.test(html));
+t("no stacks section", !html.includes("stacks-sec") && !/id="stacks"/.test(html));
+t("no cluster badges", !html.includes("cluster-") && !html.includes("badge-"));
 
-const html = fs.readFileSync("index.html","utf8");
-t("hero frames it as a portfolio", /independent/i.test(html) && /portfolio/i.test(html));
-t("no $271 suite-wide value counter anywhere", !html.includes("$271"));
-t("philosophy section present", /philosophy/i.test(html));
-
-const readme = fs.readFileSync("README.md","utf8");
-t("README explains portfolio framing", /portfolio/i.test(readme) && /independent/i.test(readme));
-t("README documents dropped forced bundle", /Solo Founder Kit/i.test(readme));
-
-console.log("data assertions run: " + n);
+const readme = fs.readFileSync("README.md", "utf8");
+t("README lists all 4 hubs", hubSlugs.every(s => readme.includes("github.com/alexwboles/" + s)));
+t("README lists all 15 products", slugs.every(s => readme.includes("github.com/alexwboles/" + s)));
+t("README has no bundle math", !readme.includes("$271") && !/combined/i.test(readme));
 '
 [ $? -eq 0 ] && ok "node data assertions" || bad "node data assertions"
 
