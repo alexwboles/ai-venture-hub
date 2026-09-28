@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# e2e.sh — end-to-end flows for ai-venture-hub (exercises catalogue logic in node)
+# e2e.sh — end-to-end flows for ai-venture-hub portfolio (exercises catalogue logic in node)
 set -u
 cd "$(dirname "$0")/.."
 node -e '
@@ -17,41 +17,67 @@ flow("search quote -> quotely-ai", () => {
   assert(r.some(p => p.slug === "quotely-ai"), "quotely-ai missing");
 });
 
-// Flow 2: search finds the gift finder (personal)
-flow("search gift -> giftgenius-ai", () => {
+// Flow 2: search finds the gift finder (personal life cluster)
+flow("search gift -> giftgenius-ai in life cluster", () => {
   const r = HUB.search("gift");
-  assert(r.some(p => p.slug === "giftgenius-ai"), "giftgenius-ai missing");
+  const g = r.find(p => p.slug === "giftgenius-ai");
+  assert(g, "giftgenius-ai missing");
+  assert.strictEqual(g.cluster, "life");
 });
 
-// Flow 3: category counts 10 business / 5 personal
-flow("category counts", () => {
-  assert.strictEqual(HUB.byCat("business").length, 10, "business count");
-  assert.strictEqual(HUB.byCat("personal").length, 5, "personal count");
+// Flow 3: cluster membership counts — trades 4, growth 3, ops 3, life 5
+flow("cluster counts", () => {
+  assert.strictEqual(HUB.byCluster("trades").length, 4, "trades");
+  assert.strictEqual(HUB.byCluster("growth").length, 3, "growth");
+  assert.strictEqual(HUB.byCluster("ops").length, 3, "ops");
+  assert.strictEqual(HUB.byCluster("life").length, 5, "life");
+  assert.strictEqual(HUB.CLUSTERS.length, 4, "cluster defs");
 });
 
-// Flow 4: every stack slug resolves to a real product card
-flow("stacks reference real slugs", () => {
-  HUB.STACKS.forEach(s => s.products.forEach(sl => {
-    const p = HUB.PRODUCTS.find(x => x.slug === sl);
-    assert(p, "stack " + s.name + " references unknown slug " + sl);
-    assert(HUB.repoUrl(p).startsWith("https://github.com/alexwboles/"), "bad repo url");
-  }));
+// Flow 4: per-cluster values — 91 / 82 / 68 / 30, and NO suite-wide sum
+flow("per-cluster values, no suite sum", () => {
+  assert.strictEqual(HUB.clusterValue("trades"), 91, "trades value");
+  assert.strictEqual(HUB.clusterValue("growth"), 82, "growth value");
+  assert.strictEqual(HUB.clusterValue("ops"), 68, "ops value");
+  assert.strictEqual(HUB.clusterValue("life"), 30, "life value");
+  assert.strictEqual(typeof HUB.totalMonthly, "undefined", "suite-wide total must not exist");
 });
 
-// Flow 5: total value math matches hero ($271/mo)
-flow("total value = 271", () => {
-  assert.strictEqual(HUB.totalMonthly(), 271);
-  const html = require("fs").readFileSync("index.html", "utf8");
-  assert(html.includes("$271/mo"), "hero total missing");
+// Flow 5: every stack slug resolves; stacks only group same-workflow products
+flow("stacks resolve + are coherent", () => {
+  const trades = new Set(HUB.byCluster("trades").map(p => p.slug));
+  HUB.STACKS.forEach(s => {
+    assert(s.why && s.why.length > 20, "stack " + s.name + " missing why");
+    s.products.forEach(sl => {
+      const p = HUB.PRODUCTS.find(x => x.slug === sl);
+      assert(p, "stack " + s.name + " references unknown slug " + sl);
+      assert(HUB.repoUrl(p).startsWith("https://github.com/alexwboles/"), "bad repo url");
+    });
+  });
+  // the trades stack draws only from the trades cluster
+  const ts = HUB.STACKS.find(s => s.slug === "trades-growth");
+  assert(ts.products.every(sl => trades.has(sl)), "trades stack mixes clusters");
 });
 
-// Flow 6: empty search returns everything; nonsense returns nothing
-flow("search edge cases", () => {
+// Flow 6: search covers cluster names too (e.g. "SOP" finds sopforge-ai)
+flow("search covers cluster vocabulary", () => {
+  assert(HUB.search("SOP").some(p => p.slug === "sopforge-ai"), "SOP search");
   assert.strictEqual(HUB.search("").length, 15, "empty search");
   assert.strictEqual(HUB.search("zzz-no-such-thing").length, 0, "nonsense search");
 });
 
-// Flow 7: case-insensitive search
+// Flow 7: rendered HTML has no suite-wide $271 counter and no old cat badges
+flow("no suite counter / old badges", () => {
+  const html = require("fs").readFileSync("index.html", "utf8");
+  assert(!html.includes("$271"), "$271 suite counter still present");
+  assert(!html.includes("total-value"), "total-value element still present");
+  assert(!html.includes("badge-business") && !html.includes("badge-personal"), "old cat badges");
+  // badges are rendered at runtime by app.js — verify it builds cluster badges
+  const app = require("fs").readFileSync("js/app.js", "utf8");
+  assert(app.includes("badge-") && app.includes("p.cluster"), "app.js must render per-cluster badges");
+});
+
+// Flow 8: case-insensitive search
 flow("case-insensitive search", () => {
   const upper = HUB.search("INBOX").map(p => p.slug).sort().join(",");
   const lower = HUB.search("inbox").map(p => p.slug).sort().join(",");
