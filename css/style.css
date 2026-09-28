@@ -31,6 +31,13 @@ body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Ari
 .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
 #count { margin: 6px 0 0; color: var(--muted); font-size: .9rem; }
 
+/* cluster sections */
+.cluster-sec { margin: 8px 0 8px; }
+.cluster-head { margin: 34px 0 4px; }
+.cluster-head h2 { font-size: 1.55rem; margin: 0 0 4px; }
+.cluster-blurb { color: var(--muted); margin: 0 0 4px; max-width: 720px; }
+.cluster-value { color: var(--muted); font-size: .88rem; margin: 0; font-weight: 600; }
+
 /* grid + cards */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 18px; margin: 18px 0 56px; }
@@ -40,8 +47,10 @@ body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Ari
 .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .badge { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
   padding: 4px 10px; border-radius: 999px; }
-.badge.business { background: #e3f6ee; color: var(--biz); }
-.badge.personal { background: #f1e4fd; color: var(--per); }
+.badge-trades { background: #e3f6ee; color: #0e9f6e; }
+.badge-growth { background: #e3efff; color: #2563eb; }
+.badge-ops { background: #fdf3e3; color: #b45309; }
+.badge-life { background: #f1e4fd; color: #9333ea; }
 .price { font-weight: 700; color: var(--accent); }
 .card h3 { margin: 6px 0 4px; font-size: 1.25rem; }
 .tagline { color: var(--muted); margin: 0 0 10px; }
@@ -59,7 +68,9 @@ body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Ari
 .stack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
 .stack { background: #0f1c33; color: #eaf0ff; border-radius: var(--radius); padding: 22px; }
 .stack h3 { margin: 0 0 8px; font-size: 1.2rem; color: #fff; }
-.stack .pitch { color: #b9c9ec; font-size: .95rem; margin: 0 0 14px; }
+.stack .pitch { color: #b9c9ec; font-size: .95rem; margin: 0 0 10px; }
+.stack .why { color: #d7e3ff; font-size: .9rem; margin: 0 0 14px;
+  border-left: 3px solid #a5c4ff; padding-left: 10px; }
 .stack-products a { color: #a5c4ff; text-decoration: none; font-weight: 600; }
 .stack-products a:hover { text-decoration: underline; }
 .stack-products .plus { color: #5b6b82; margin: 0 4px; }
