@@ -141,6 +141,34 @@
   function repoUrl(p) { return GH + p.slug; }
   function hubUrl(h) { return GH + h.slug; }
 
+  /** Which logical hub a product belongs to (each product is in exactly one). */
+  function hubOfProduct(slug) {
+    for (var i = 0; i < HUBS.length; i++) {
+      if (HUBS[i].members.indexOf(slug) !== -1) return HUBS[i];
+    }
+    return null;
+  }
+
+  /** Filter the catalogue by free-text query and/or hub slug. Pure. */
+  function filterProducts(query, hubSlug) {
+    var q = String(query || "").trim().toLowerCase();
+    return PRODUCTS.filter(function (p) {
+      if (hubSlug) {
+        var h = hubOfProduct(p.slug);
+        if (!h || h.slug !== hubSlug) return false;
+      }
+      if (!q) return true;
+      return (p.name + " " + p.tagline).toLowerCase().indexOf(q) !== -1;
+    });
+  }
+
+  /** One random product — the "surprise me" discovery pick. */
+  function randomProduct() {
+    return PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)];
+  }
+
   return { HUBS: HUBS, PRODUCTS: PRODUCTS, GH: GH,
-           productBySlug: productBySlug, repoUrl: repoUrl, hubUrl: hubUrl };
+           productBySlug: productBySlug, repoUrl: repoUrl, hubUrl: hubUrl,
+           hubOfProduct: hubOfProduct, filterProducts: filterProducts,
+           randomProduct: randomProduct };
 });

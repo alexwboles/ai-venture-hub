@@ -78,6 +78,32 @@ const readme = fs.readFileSync("README.md", "utf8");
 t("README lists all 4 hubs", hubSlugs.every(s => readme.includes("github.com/alexwboles/" + s)));
 t("README lists all 54 products", slugs.every(s => readme.includes("github.com/alexwboles/" + s)));
 t("README has no bundle math", !readme.includes("$271") && !/combined/i.test(readme));
+t("filterProducts: empty query returns all 54",
+  HUB.filterProducts("", "").length === 54);
+t("filterProducts: query narrows (wedding -> 1)",
+  HUB.filterProducts("wedding", "").length === 1 &&
+  HUB.filterProducts("wedding", "")[0].slug === "weddingplan-ai");
+t("filterProducts: hub filter isolates trades hub",
+  HUB.filterProducts("", "trades-hub").length === 6 &&
+  HUB.filterProducts("", "trades-hub").every(p => HUB.hubOfProduct(p.slug).slug === "trades-hub"));
+t("filterProducts: query + hub combine",
+  HUB.filterProducts("quote", "trades-hub").length === 1);
+t("filterProducts: no match -> empty",
+  HUB.filterProducts("zzz-no-such-thing", "").length === 0);
+t("hubOfProduct resolves (winback -> growth-hub)",
+  HUB.hubOfProduct("winback-ai") && HUB.hubOfProduct("winback-ai").slug === "growth-hub");
+t("hubOfProduct null for unknown slug", HUB.hubOfProduct("nope-ai") === null);
+t("randomProduct returns a real product",
+  !!HUB.productBySlug(HUB.randomProduct().slug));
+const app2 = fs.readFileSync("js/app.js", "utf8");
+t("app wires finder (search + hub filter + surprise + copy link)",
+  app2.includes("prodSearch") && app2.includes("hubFilter") && app2.includes("surpriseBtn") &&
+  app2.includes("filterProducts") && app2.includes("randomProduct") && app2.includes("copy-link"));
+const html2 = fs.readFileSync("index.html", "utf8");
+t("index has finder markup",
+  /id="prodSearch"/.test(html2) && /id="hubFilter"/.test(html2) &&
+  /id="surpriseBtn"/.test(html2) && /id="prodCount"/.test(html2));
+
 '
 [ $? -eq 0 ] && ok "node data assertions" || bad "node data assertions"
 

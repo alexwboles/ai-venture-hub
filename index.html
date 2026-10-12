@@ -24,6 +24,12 @@
 
   <section>
     <h2>All products</h2>
+    <div class="finder">
+      <input type="search" id="prodSearch" placeholder="Search 54 products…  ( press / )" aria-label="Search products">
+      <select id="hubFilter" aria-label="Filter by hub"><option value="">All hubs</option></select>
+      <button id="surpriseBtn" class="btn">Surprise me</button>
+    </div>
+    <p class="muted" id="prodCount"></p>
     <ul id="products" class="product-list"></ul>
   </section>
 </main>

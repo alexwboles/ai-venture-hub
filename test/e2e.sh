@@ -88,6 +88,45 @@ flow("hub card member names resolve", () => {
   });
 });
 
+
+// Flow 8: filterProducts behaves like the on-page finder
+flow("filterProducts catalogue filtering", () => {
+  assert.strictEqual(HUB.filterProducts("", "").length, 54, "all");
+  const w = HUB.filterProducts("wedding", "");
+  assert.strictEqual(w.length, 1, "wedding query");
+  assert.strictEqual(w[0].slug, "weddingplan-ai", "wedding slug");
+  const trades = HUB.filterProducts("", "trades-hub");
+  assert.strictEqual(trades.length, 6, "trades count");
+  assert(trades.every(p => HUB.hubOfProduct(p.slug).slug === "trades-hub"), "trades membership");
+  assert.strictEqual(HUB.filterProducts("zzz-nope", "").length, 0, "no match");
+  assert.strictEqual(HUB.filterProducts("  WEDDING ", "").length, 1, "case/space tolerant");
+});
+
+// Flow 9: randomProduct + hubOfProduct power discovery UI
+flow("randomProduct and hubOfProduct", () => {
+  for (let i = 0; i < 20; i++) {
+    const p = HUB.randomProduct();
+    assert(HUB.productBySlug(p.slug), "random pick resolves: " + p.slug);
+    const h = HUB.hubOfProduct(p.slug);
+    assert(h && h.slug, "random pick has hub: " + p.slug);
+    assert(HUB.hubUrl(h).endsWith("/" + h.slug), "hub url");
+  }
+  assert.strictEqual(HUB.hubOfProduct("nope-ai"), null, "unknown -> null");
+});
+
+// Flow 10: app.js renders finder UI and hub-tagged rows
+flow("app.js finder UI", () => {
+  const app = fs.readFileSync("js/app.js", "utf8");
+  ["prodSearch", "hubFilter", "surpriseBtn", "prodCount"].forEach(id =>
+    assert(app.includes(id), "app missing " + id));
+  assert(app.includes("hub-tag"), "no hub-tag rendering");
+  assert(app.includes("copy-link"), "no copy-link rendering");
+  assert(app.includes("spotlight"), "no spotlight rendering");
+  const html = fs.readFileSync("index.html", "utf8");
+  ["prodSearch", "hubFilter", "surpriseBtn", "prodCount"].forEach(id =>
+    assert(new RegExp("id=\"" + id + "\"").test(html), "html missing " + id));
+});
+
 console.log("---");
 console.log("e2e: " + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);
