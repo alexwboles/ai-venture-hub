@@ -1,6 +1,6 @@
 // ai-venture-hub — minimal portfolio index (UMD: works in browser and Node)
 //
-// A plain index: 4 logical hub dashboards + an alphabetical list of the 54
+// A plain index: 4 logical hub dashboards + an alphabetical list of the 57
 // independent products. No suite narrative, no bundle math.
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
@@ -40,10 +40,14 @@
       tagline: "Bucket list planner: dream it, plan it, check it off." },
     { slug: "budgetlens-ai", name: "BudgetLens AI",
       tagline: "Upload your bank CSV. See where your money actually goes." },
+    { slug: "callrecall-ai", name: "CallRecall AI",
+      tagline: "Call-recording memory for voice agents: caller briefs, no per-call fees." },
     { slug: "cashflow-ai", name: "CashFlow AI",
       tagline: "Cash-flow forecaster: see what's coming in and going out." },
     { slug: "debtpayoff-ai", name: "DebtPayoff AI",
       tagline: "Debt payoff planner: avalanche vs snowball, payoff dates." },
+    { slug: "decisiontune-ai", name: "DecisionTune AI",
+      tagline: "Free self-hosted fine-tuning + eval rig for decision models." },
     { slug: "fitnessplan-ai", name: "FitnessPlan AI",
       tagline: "Personal workout plans built around your goals and gear." },
     { slug: "fleetlog-ai", name: "FleetLog AI",
@@ -126,6 +130,8 @@
       tagline: "Packing lists tailored to your trip." },
     { slug: "triagepilot-ai", name: "TriagePilot AI",
       tagline: "Your inbox, sorted: urgent first, replies drafted." },
+    { slug: "voice-memory", name: "Voice Memory",
+      tagline: "Free self-hosted voice-agent memory layer: caller briefs, PII redaction on by default." },
     { slug: "wardrobe-ai", name: "Wardrobe AI",
       tagline: "Wardrobe planner: outfits from what you own." },
     { slug: "weddingplan-ai", name: "WeddingPlan AI",

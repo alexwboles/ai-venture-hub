@@ -3,48 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alex's AI Micro-Products</title>
+<title>Alex's AI Micro-Products — The Dispatch</title>
 <meta name="description" content="Independent AI tools, each free to run. Grouped into logical hubs where they belong together.">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<header class="hero">
-  <div class="wrap">
-    <h1>Alex's AI Micro-Products</h1>
-    <p class="sub">Independent tools, each free to run. Grouped into logical hubs where they belong together.</p>
+<header class="masthead">
+  <div class="wrap masthead-in">
+    <div class="masthead-left">
+      <p class="kicker">Alex's dispatch</p>
+      <a class="wordmark" href="./">AI Micro-Products</a>
+    </div>
+    <div class="masthead-right">
+      <p class="dateline" id="dateline">Independent tools, each free to run.</p>
+      <button class="saved-pill" id="mastheadSaved" type="button" title="Show saved products">★ Saved <span id="mastheadSavedCount">0</span></button>
+    </div>
   </div>
 </header>
 
+<section class="hero">
+  <div class="wrap">
+    <p class="hero-kicker">The complete index</p>
+    <h1>Fifty-seven independent tools,<br>each free to run.</h1>
+    <p class="sub">Grouped into logical hubs where they belong together — a portfolio, not a suite. No bundled upsells, no accounts, no lock-in.</p>
+    <div class="stats" id="stats"></div>
+  </div>
+</section>
+
 <main class="wrap">
-  <section>
-    <h2>Hubs</h2>
+  <section id="hubs-sec" aria-labelledby="hubs-h">
+    <div class="sec-head">
+      <h2 id="hubs-h">The hubs</h2>
+      <p class="sec-sub">Four dashboards where the tools genuinely belong together.</p>
+    </div>
     <div id="hubs" class="hub-grid"></div>
   </section>
 
-  <section>
-    <h2>All products</h2>
-    <div class="finder">
-      <input type="search" id="prodSearch" placeholder="Search 54 products…  ( press / )" aria-label="Search products">
-      <select id="hubFilter" aria-label="Filter by hub"><option value="">All hubs</option></select>
+  <section id="index-sec" aria-labelledby="index-h">
+    <div class="sec-head">
+      <h2 id="index-h">The index</h2>
+      <p class="sec-sub">Every tool, ranked and searchable. Press <kbd>/</kbd> to search from anywhere.</p>
+    </div>
+    <div class="finderbar" id="finderbar">
+      <input type="search" id="prodSearch" placeholder="Search products…" aria-label="Search products">
+      <div class="chips" id="hubChips" role="radiogroup" aria-label="Filter by hub"></div>
       <select id="sortSel" aria-label="Sort products">
         <option value="az">A–Z</option>
         <option value="za">Z–A</option>
         <option value="hub">By hub</option>
       </select>
-      <button id="favOnlyBtn" class="btn" aria-pressed="false" title="Show only saved products">★ Saved</button>
-      <button id="surpriseBtn" class="btn">Surprise me</button>
+      <button id="favOnlyBtn" class="btn ghost" type="button" aria-pressed="false" title="Show only saved products">★ Saved</button>
+      <button id="surpriseBtn" class="btn ghost" type="button">Surprise me</button>
     </div>
-    <p class="muted" id="prodCount"></p>
-    <ul id="products" class="product-list"></ul>
+    <p class="muted" id="prodCount" aria-live="polite"></p>
+    <ol id="products" class="leaderboard"></ol>
   </section>
 </main>
 
 <footer>
-  <div class="wrap">
-    Each product is its own repo at <a href="https://github.com/alexwboles" target="_blank" rel="noopener">github.com/alexwboles</a>
+  <div class="wrap foot-in">
+    <p>Each product is its own repo at <a href="https://github.com/alexwboles" target="_blank" rel="noopener">github.com/alexwboles</a>. Free to run, local-first, open source.</p>
+    <p class="muted">The Dispatch · updated October 2026</p>
   </div>
 </footer>
+
+<div class="modal-backdrop" id="modalBackdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <button class="modal-close" id="modalClose" type="button" aria-label="Close details">✕</button>
+    <p class="kicker" id="modalKicker"></p>
+    <h2 id="modalName"></h2>
+    <p class="modal-tagline" id="modalTagline"></p>
+    <div class="modal-actions">
+      <a class="btn" id="modalRepo" href="#" target="_blank" rel="noopener">Open repo →</a>
+      <button class="btn ghost" id="modalCopy" type="button">Copy link</button>
+      <button class="btn ghost" id="modalFav" type="button" aria-pressed="false">★ Save</button>
+    </div>
+    <div class="modal-related">
+      <h3>More from this hub</h3>
+      <ul id="modalRelated"></ul>
+    </div>
+  </div>
+</div>
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>

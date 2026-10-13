@@ -36,7 +36,12 @@ flow("hub membership", () => {
       seen.add(sl);
     });
   });
-  assert.strictEqual(seen.size, 54, "all 54 products assigned");
+  assert.strictEqual(seen.size, 54, "all 54 hubbed products assigned");
+  ["voice-memory", "decisiontune-ai", "callrecall-ai"].forEach(sl => {
+    assert(HUB.productBySlug(sl), "new product missing: " + sl);
+    assert.strictEqual(HUB.hubOfProduct(sl), null, sl + " should be unfiled");
+  });
+  assert.strictEqual(HUB.PRODUCTS.length, 57, "57 products total");
 });
 
 // Flow 3: PRODUCTS list is alphabetical by name (the compact A–Z list)
@@ -91,7 +96,7 @@ flow("hub card member names resolve", () => {
 
 // Flow 8: filterProducts behaves like the on-page finder
 flow("filterProducts catalogue filtering", () => {
-  assert.strictEqual(HUB.filterProducts("", "").length, 54, "all");
+  assert.strictEqual(HUB.filterProducts("", "").length, 57, "all");
   const w = HUB.filterProducts("wedding", "");
   assert.strictEqual(w.length, 1, "wedding query");
   assert.strictEqual(w[0].slug, "weddingplan-ai", "wedding slug");
@@ -104,12 +109,12 @@ flow("filterProducts catalogue filtering", () => {
 
 // Flow 9: randomProduct + hubOfProduct power discovery UI
 flow("randomProduct and hubOfProduct", () => {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     const p = HUB.randomProduct();
     assert(HUB.productBySlug(p.slug), "random pick resolves: " + p.slug);
     const h = HUB.hubOfProduct(p.slug);
-    assert(h && h.slug, "random pick has hub: " + p.slug);
-    assert(HUB.hubUrl(h).endsWith("/" + h.slug), "hub url");
+    if (h) assert(HUB.hubUrl(h).endsWith("/" + h.slug), "hub url for " + p.slug);
+    // unfiled products (voice-memory etc.) legitimately have no hub
   }
   assert.strictEqual(HUB.hubOfProduct("nope-ai"), null, "unknown -> null");
 });
@@ -117,20 +122,23 @@ flow("randomProduct and hubOfProduct", () => {
 // Flow 10: app.js renders finder UI and hub-tagged rows
 flow("app.js finder UI", () => {
   const app = fs.readFileSync("js/app.js", "utf8");
-  ["prodSearch", "hubFilter", "surpriseBtn", "prodCount"].forEach(id =>
+  ["prodSearch", "hubChips", "surpriseBtn", "prodCount", "sortSel", "favOnlyBtn"].forEach(id =>
     assert(app.includes(id), "app missing " + id));
+  assert(app.includes("modalBackdrop"), "app missing modal");
+  assert(app.includes("data-detail"), "app missing detail triggers");
   assert(app.includes("hub-tag"), "no hub-tag rendering");
   assert(app.includes("copy-link"), "no copy-link rendering");
   assert(app.includes("spotlight"), "no spotlight rendering");
   const html = fs.readFileSync("index.html", "utf8");
-  ["prodSearch", "hubFilter", "surpriseBtn", "prodCount"].forEach(id =>
+  ["prodSearch", "hubChips", "surpriseBtn", "prodCount", "sortSel", "favOnlyBtn"].forEach(id =>
     assert(new RegExp("id=\"" + id + "\"").test(html), "html missing " + id));
+  assert(/id="modalBackdrop"/.test(html), "html missing modalBackdrop");
 });
 
 // Flow 11: sort, shareable hash, favorites helpers
 flow("sortProducts + hash round-trip", () => {
   const az = HUB.sortProducts(HUB.filterProducts("", ""), "az");
-  assert.strictEqual(az.length, 54, "az count");
+  assert.strictEqual(az.length, 57, "az count");
   const za = HUB.sortProducts(HUB.filterProducts("plan", ""), "za");
   const azf = HUB.sortProducts(HUB.filterProducts("plan", ""), "az");
   assert.deepStrictEqual(za.map(p => p.slug), azf.map(p => p.slug).reverse(), "za reverses az");
@@ -138,16 +146,30 @@ flow("sortProducts + hash round-trip", () => {
   const order = HUB.HUBS.map(h => h.slug);
   let last = -1;
   hub.forEach(p => {
-    const o = order.indexOf(HUB.hubOfProduct(p.slug).slug);
+    const hh = HUB.hubOfProduct(p.slug);
+    const o = hh ? order.indexOf(hh.slug) : 99;
     assert(o >= last, "hub grouping broke at " + p.slug);
     last = o;
   });
+  const unfiled = hub.filter(p => !HUB.hubOfProduct(p.slug)).map(p => p.slug).sort();
+  assert.deepStrictEqual(unfiled, ["callrecall-ai", "decisiontune-ai", "voice-memory"], "unfiled sort last");
   const st = { q: "SEO & audits", hub: "growth-hub", sort: "hub" };
   assert.deepStrictEqual(HUB.hashToState(HUB.stateToHash(st)), st, "hash round-trip with special chars");
   assert.strictEqual(HUB.stateToHash({ q: "", hub: "", sort: "az" }), "", "empty state -> empty hash");
   const app = fs.readFileSync("js/app.js", "utf8");
   assert(app.includes("localStorage"), "favorites not persisted");
   assert(app.includes("aivh:favs"), "favorites key missing");
+});
+
+// Flow 12: detail modal inputs — related tools come from the same hub
+flow("modal related tools resolve", () => {
+  const p = HUB.productBySlug("quotely-ai");
+  const h = HUB.hubOfProduct("quotely-ai");
+  const related = HUB.filterProducts("", h.slug).filter(x => x.slug !== "quotely-ai");
+  assert(related.length >= 4, "trades hub should yield related tools");
+  assert(related.every(x => HUB.hubOfProduct(x.slug).slug === "trades-hub"), "related all trades");
+  assert(!related.some(x => x.slug === "quotely-ai"), "self excluded");
+  assert.strictEqual(HUB.hubOfProduct("voice-memory"), null, "unfiled -> no related hub");
 });
 
 console.log("---");

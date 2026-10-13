@@ -21,7 +21,9 @@ Independent tools, each free to run. Grouped into logical hubs where they belong
 - [BookPilot AI](https://github.com/alexwboles/bookpilot-ai) — Booking pages and appointment scheduling for service businesses.
 - [BucketList AI](https://github.com/alexwboles/bucketlist-ai) — Bucket list planner: dream it, plan it, check it off.
 - [BudgetLens AI](https://github.com/alexwboles/budgetlens-ai) — Upload your bank CSV. See where your money actually goes.
+- [CallRecall AI](https://github.com/alexwboles/callrecall-ai) — Call-recording memory for voice agents: caller briefs, no per-call fees.
 - [CashFlow AI](https://github.com/alexwboles/cashflow-ai) — Cash-flow forecaster: see what's coming in and going out.
+- [DecisionTune AI](https://github.com/alexwboles/decisiontune-ai) — Free self-hosted fine-tuning + eval rig for decision models.
 - [DebtPayoff AI](https://github.com/alexwboles/debtpayoff-ai) — Debt payoff planner: avalanche vs snowball, payoff dates.
 - [FitnessPlan AI](https://github.com/alexwboles/fitnessplan-ai) — Personal workout plans built around your goals and gear.
 - [FleetLog AI](https://github.com/alexwboles/fleetlog-ai) — Fleet log: vehicles, maintenance and mileage for small fleets.
@@ -63,6 +65,7 @@ Independent tools, each free to run. Grouped into logical hubs where they belong
 - [StudyFlow AI](https://github.com/alexwboles/studyflow-ai) — Spaced-repetition exam prep that actually sticks.
 - [TaxPrep AI](https://github.com/alexwboles/taxprep-ai) — Tax prep organizer: documents, deductions and deadlines.
 - [TravelPack AI](https://github.com/alexwboles/travelpack-ai) — Packing lists tailored to your trip.
+- [Voice Memory](https://github.com/alexwboles/voice-memory) — Free self-hosted voice-agent memory layer: caller briefs, PII redaction on by default.
 - [TriagePilot AI](https://github.com/alexwboles/triagepilot-ai) — Your inbox, sorted: urgent first, replies drafted.
 - [Wardrobe AI](https://github.com/alexwboles/wardrobe-ai) — Wardrobe planner: outfits from what you own.
 - [WeddingPlan AI](https://github.com/alexwboles/weddingplan-ai) — Wedding planner: budget, vendors and timelines.
@@ -71,7 +74,7 @@ Independent tools, each free to run. Grouped into logical hubs where they belong
 ## Finder
 
 The product list has a live finder: free-text search (`/` focuses it from anywhere),
-hub filter, **sort** (A–Z / Z–A / by hub), and **saved favorites** (★ on any row,
+hub chips, **sort** (A–Z / Z–A / by hub), a **detail view** for every product, and **saved favorites** (★ on any row,
 persisted in the browser, with a "Saved only" toggle). The finder state lives in the
 URL hash (`#q=…&hub=…&sort=…`), so a filtered view is shareable. "Surprise me" jumps
 to a random product; "Copy link" copies its repo URL.

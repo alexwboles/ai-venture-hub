@@ -29,7 +29,7 @@ t("every hub has name + blurb", HUB.HUBS.every(h => h.name && h.blurb && h.blurb
 
 const slugs = [
   "adcopy-ai","apartmenthunt-ai","applypilot-ai","babytracker-ai","bizbrain-ai",
-  "bookpilot-ai","bucketlist-ai","budgetlens-ai","cashflow-ai","debtpayoff-ai",
+  "bookpilot-ai","bucketlist-ai","budgetlens-ai","callrecall-ai","cashflow-ai","decisiontune-ai","debtpayoff-ai",
   "fitnessplan-ai","fleetlog-ai","gardenplan-ai","giftgenius-ai","habitloop-ai",
   "hearth-ai","hirewise-ai","homeinventory-ai","homekeeper-ai","invoicepilot-ai",
   "journalpilot-ai","leadqualify-ai","loyaltyloop-ai","materiallist-ai","medtrack-ai",
@@ -40,8 +40,8 @@ const slugs = [
   "sopforge-ai","speechwriter-ai","studyflow-ai","taxprep-ai","travelpack-ai",
   "triagepilot-ai","wardrobe-ai","weddingplan-ai","winback-ai"
 ];
-t("54 products total", HUB.PRODUCTS.length === 54);
-t("all 54 slugs present", slugs.every(s => HUB.PRODUCTS.some(p => p.slug === s)));
+t("57 products total", HUB.PRODUCTS.length === 57);
+t("all 57 slugs present", slugs.every(s => HUB.PRODUCTS.some(p => p.slug === s)));
 t("repo links well-formed", HUB.PRODUCTS.every(p => HUB.repoUrl(p) === "https://github.com/alexwboles/" + p.slug));
 t("every product has name + one-line tagline",
   HUB.PRODUCTS.every(p => p.name && p.tagline && p.tagline.length > 5));
@@ -56,7 +56,8 @@ t("every hub member resolves to a real product",
 const seen = {};
 let dup = false;
 HUB.HUBS.forEach(h => h.members.forEach(sl => { if (seen[sl]) dup = true; seen[sl] = 1; }));
-t("every product in exactly one hub", !dup && Object.keys(seen).length === 54);
+t("54 hubbed + 3 unfiled, none in two hubs", !dup && Object.keys(seen).length === 54 &&
+  ["voice-memory","decisiontune-ai","callrecall-ai"].every(s => HUB.hubOfProduct(s) === null));
 
 t("no leftover suite-era exports",
   typeof HUB.STACKS === "undefined" && typeof HUB.CLUSTERS === "undefined" &&
@@ -66,9 +67,9 @@ t("no leftover suite-era exports",
 const html = fs.readFileSync("index.html", "utf8");
 t("page title names AI Micro-Products",
   html.indexOf("<title>") !== -1 && html.indexOf("AI Micro-Products") !== -1);
-t("honest one-liner present", html.includes("Independent tools, each free to run. Grouped into logical hubs where they belong together."));
+t("honest one-liner present", html.includes("Grouped into logical hubs where they belong together"));
 t("index.html wires data.js + app.js (hubs render at runtime)",
-  html.indexOf("js/data.js") !== -1 && html.indexOf("js/app.js") !== -1 && /id="hubs"/.test(html));
+  html.indexOf("js/data.js") !== -1 && html.indexOf("js/app.js") !== -1 && /id="hubs"/.test(html) && /id="modalBackdrop"/.test(html));
 t("no $271 counter", !html.includes("$271"));
 t("no suite language", !/one suite|mega-suite|suite-wide|forced bundles/i.test(html));
 t("no stacks section", !html.includes("stacks-sec") && !/id="stacks"/.test(html));
@@ -78,8 +79,8 @@ const readme = fs.readFileSync("README.md", "utf8");
 t("README lists all 4 hubs", hubSlugs.every(s => readme.includes("github.com/alexwboles/" + s)));
 t("README lists all 54 products", slugs.every(s => readme.includes("github.com/alexwboles/" + s)));
 t("README has no bundle math", !readme.includes("$271") && !/combined/i.test(readme));
-t("filterProducts: empty query returns all 54",
-  HUB.filterProducts("", "").length === 54);
+t("filterProducts: empty query returns all 57",
+  HUB.filterProducts("", "").length === 57);
 t("filterProducts: query narrows (wedding -> 1)",
   HUB.filterProducts("wedding", "").length === 1 &&
   HUB.filterProducts("wedding", "")[0].slug === "weddingplan-ai");
@@ -107,13 +108,15 @@ t("sortProducts hub groups by hub order (trades first, life last)",
   (() => {
     const s = HUB.sortProducts(HUB.PRODUCTS, "hub");
     const order = HUB.HUBS.map(h => h.slug);
-    const seq = s.map(p => order.indexOf(HUB.hubOfProduct(p.slug).slug));
+    const seq = s.map(p => { const h = HUB.hubOfProduct(p.slug); return h ? order.indexOf(h.slug) : 99; });
     const nonDecreasing = seq.every((o, i) => i === 0 || o >= seq[i-1]);
     const azWithin = HUB.HUBS.every(h => {
-      const names = s.filter(p => HUB.hubOfProduct(p.slug).slug === h.slug).map(p => p.name);
+      const names = s.filter(p => { const hh = HUB.hubOfProduct(p.slug); return hh && hh.slug === h.slug; }).map(p => p.name);
       return names.every((n, i) => i === 0 || names[i-1].localeCompare(n) <= 0);
     });
-    return seq[0] === 0 && seq[seq.length-1] === order.length-1 && nonDecreasing && azWithin;
+    const tail = seq.slice(-3);
+    return seq[0] === 0 && tail.every(function(o){return o === 99;}) &&
+      seq[seq.length-4] === order.length-1 && nonDecreasing && azWithin;
   })());
 t("sortProducts does not mutate input",
   (() => { const c = HUB.PRODUCTS.slice(); HUB.sortProducts(HUB.PRODUCTS, "za"); return HUB.PRODUCTS.every((p, i) => p === c[i]); })());
@@ -133,15 +136,16 @@ t("hashToState ignores unknown hub/sort values",
 t("hashToState tolerates empty hash", HUB.hashToState("").q === "" && HUB.hashToState("").sort === "az");
 const app2 = fs.readFileSync("js/app.js", "utf8");
 t("app wires finder (search + hub filter + surprise + copy link)",
-  app2.includes("prodSearch") && app2.includes("hubFilter") && app2.includes("surpriseBtn") &&
+  app2.includes("prodSearch") && app2.includes("hubChips") && app2.includes("surpriseBtn") &&
   app2.includes("filterProducts") && app2.includes("randomProduct") && app2.includes("copy-link"));
 const html2 = fs.readFileSync("index.html", "utf8");
-t("index has finder markup",
-  /id="prodSearch"/.test(html2) && /id="hubFilter"/.test(html2) &&
+t("index has finder markup (chips, no dropdown)",
+  /id="prodSearch"/.test(html2) && /id="hubChips"/.test(html2) &&
   /id="surpriseBtn"/.test(html2) && /id="prodCount"/.test(html2));
 t("index has sort + saved-only controls",
   /id="sortSel"/.test(html2) && /id="favOnlyBtn"/.test(html2));
 const app3 = fs.readFileSync("js/app.js", "utf8");
+t("detail modal wired", app3.includes("modalBackdrop") && app3.includes("data-detail") && app3.includes("modalRelated"));
 t("app wires sort, hash sync and favorites",
   app3.includes("sortSel") && app3.includes("favOnlyBtn") &&
   app3.includes("sortProducts") && app3.includes("stateToHash") &&
