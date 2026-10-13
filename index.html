@@ -27,6 +27,12 @@
     <div class="finder">
       <input type="search" id="prodSearch" placeholder="Search 54 products…  ( press / )" aria-label="Search products">
       <select id="hubFilter" aria-label="Filter by hub"><option value="">All hubs</option></select>
+      <select id="sortSel" aria-label="Sort products">
+        <option value="az">A–Z</option>
+        <option value="za">Z–A</option>
+        <option value="hub">By hub</option>
+      </select>
+      <button id="favOnlyBtn" class="btn" aria-pressed="false" title="Show only saved products">★ Saved</button>
       <button id="surpriseBtn" class="btn">Surprise me</button>
     </div>
     <p class="muted" id="prodCount"></p>

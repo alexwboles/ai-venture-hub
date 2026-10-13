@@ -127,6 +127,29 @@ flow("app.js finder UI", () => {
     assert(new RegExp("id=\"" + id + "\"").test(html), "html missing " + id));
 });
 
+// Flow 11: sort, shareable hash, favorites helpers
+flow("sortProducts + hash round-trip", () => {
+  const az = HUB.sortProducts(HUB.filterProducts("", ""), "az");
+  assert.strictEqual(az.length, 54, "az count");
+  const za = HUB.sortProducts(HUB.filterProducts("plan", ""), "za");
+  const azf = HUB.sortProducts(HUB.filterProducts("plan", ""), "az");
+  assert.deepStrictEqual(za.map(p => p.slug), azf.map(p => p.slug).reverse(), "za reverses az");
+  const hub = HUB.sortProducts(HUB.filterProducts("", ""), "hub");
+  const order = HUB.HUBS.map(h => h.slug);
+  let last = -1;
+  hub.forEach(p => {
+    const o = order.indexOf(HUB.hubOfProduct(p.slug).slug);
+    assert(o >= last, "hub grouping broke at " + p.slug);
+    last = o;
+  });
+  const st = { q: "SEO & audits", hub: "growth-hub", sort: "hub" };
+  assert.deepStrictEqual(HUB.hashToState(HUB.stateToHash(st)), st, "hash round-trip with special chars");
+  assert.strictEqual(HUB.stateToHash({ q: "", hub: "", sort: "az" }), "", "empty state -> empty hash");
+  const app = fs.readFileSync("js/app.js", "utf8");
+  assert(app.includes("localStorage"), "favorites not persisted");
+  assert(app.includes("aivh:favs"), "favorites key missing");
+});
+
 console.log("---");
 console.log("e2e: " + pass + " passed, " + fail + " failed");
 process.exit(fail ? 1 : 0);

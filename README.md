@@ -68,6 +68,14 @@ Independent tools, each free to run. Grouped into logical hubs where they belong
 - [WeddingPlan AI](https://github.com/alexwboles/weddingplan-ai) — Wedding planner: budget, vendors and timelines.
 - [WinBack AI](https://github.com/alexwboles/winback-ai) — Turn your dead customer list into revenue again.
 
+## Finder
+
+The product list has a live finder: free-text search (`/` focuses it from anywhere),
+hub filter, **sort** (A–Z / Z–A / by hub), and **saved favorites** (★ on any row,
+persisted in the browser, with a "Saved only" toggle). The finder state lives in the
+URL hash (`#q=…&hub=…&sort=…`), so a filtered view is shareable. "Surprise me" jumps
+to a random product; "Copy link" copies its repo URL.
+
 ## Principles (every product)
 
 1. **Independent** — each solves one problem for one kind of user, and works fully on its own.

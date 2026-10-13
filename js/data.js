@@ -167,8 +167,56 @@
     return PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)];
   }
 
+  var SORT_MODES = ["az", "za", "hub"];
+
+  /** Sort a product array. az: A→Z by name; za: Z→A; hub: hub order, A→Z within.
+   *  Pure — returns a new array. */
+  function sortProducts(items, mode) {
+    var arr = (items || []).slice();
+    if (mode === "za") {
+      arr.sort(function (a, b) { return b.name.localeCompare(a.name); });
+    } else if (mode === "hub") {
+      var order = {};
+      HUBS.forEach(function (h, i) { order[h.slug] = i; });
+      arr.sort(function (a, b) {
+        var ha = hubOfProduct(a.slug), hb = hubOfProduct(b.slug);
+        var oa = ha ? order[ha.slug] : 99, ob = hb ? order[hb.slug] : 99;
+        return (oa - ob) || a.name.localeCompare(b.name);
+      });
+    } else {
+      arr.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    }
+    return arr;
+  }
+
+  /** Encode finder state into a shareable URL hash: #q=…&hub=…&sort=… Pure. */
+  function stateToHash(state) {
+    var s = state || {};
+    var parts = [];
+    if (s.q) parts.push("q=" + encodeURIComponent(s.q));
+    if (s.hub) parts.push("hub=" + encodeURIComponent(s.hub));
+    if (s.sort && s.sort !== "az") parts.push("sort=" + encodeURIComponent(s.sort));
+    return parts.length ? "#" + parts.join("&") : "";
+  }
+
+  /** Decode a URL hash back into finder state. Unknown values are ignored. Pure. */
+  function hashToState(hash) {
+    var out = { q: "", hub: "", sort: "az" };
+    String(hash || "").replace(/^#/, "").split("&").forEach(function (kv) {
+      var i = kv.indexOf("=");
+      if (i === -1) return;
+      var k = kv.slice(0, i), v = decodeURIComponent(kv.slice(i + 1));
+      if (k === "q") out.q = v;
+      else if (k === "hub" && HUBS.some(function (h) { return h.slug === v; })) out.hub = v;
+      else if (k === "sort" && SORT_MODES.indexOf(v) !== -1) out.sort = v;
+    });
+    return out;
+  }
+
   return { HUBS: HUBS, PRODUCTS: PRODUCTS, GH: GH,
            productBySlug: productBySlug, repoUrl: repoUrl, hubUrl: hubUrl,
            hubOfProduct: hubOfProduct, filterProducts: filterProducts,
-           randomProduct: randomProduct };
+           randomProduct: randomProduct, sortProducts: sortProducts,
+           stateToHash: stateToHash, hashToState: hashToState,
+           SORT_MODES: SORT_MODES };
 });

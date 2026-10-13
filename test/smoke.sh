@@ -95,6 +95,42 @@ t("hubOfProduct resolves (winback -> growth-hub)",
 t("hubOfProduct null for unknown slug", HUB.hubOfProduct("nope-ai") === null);
 t("randomProduct returns a real product",
   !!HUB.productBySlug(HUB.randomProduct().slug));
+
+// second sweep: sort modes
+t("sortProducts az is A-Z",
+  HUB.sortProducts(HUB.PRODUCTS, "az").map(p => p.name)
+    .every((n, i, a) => i === 0 || a[i-1].localeCompare(n) <= 0));
+t("sortProducts za reverses az",
+  HUB.sortProducts(HUB.PRODUCTS, "za")[0].slug ===
+  HUB.sortProducts(HUB.PRODUCTS, "az").slice(-1)[0].slug);
+t("sortProducts hub groups by hub order (trades first, life last)",
+  (() => {
+    const s = HUB.sortProducts(HUB.PRODUCTS, "hub");
+    const order = HUB.HUBS.map(h => h.slug);
+    const seq = s.map(p => order.indexOf(HUB.hubOfProduct(p.slug).slug));
+    const nonDecreasing = seq.every((o, i) => i === 0 || o >= seq[i-1]);
+    const azWithin = HUB.HUBS.every(h => {
+      const names = s.filter(p => HUB.hubOfProduct(p.slug).slug === h.slug).map(p => p.name);
+      return names.every((n, i) => i === 0 || names[i-1].localeCompare(n) <= 0);
+    });
+    return seq[0] === 0 && seq[seq.length-1] === order.length-1 && nonDecreasing && azWithin;
+  })());
+t("sortProducts does not mutate input",
+  (() => { const c = HUB.PRODUCTS.slice(); HUB.sortProducts(HUB.PRODUCTS, "za"); return HUB.PRODUCTS.every((p, i) => p === c[i]); })());
+
+// second sweep: shareable hash state
+t("stateToHash/hashToState round-trip",
+  (() => {
+    const st = { q: "wedding plan", hub: "life-hub", sort: "za" };
+    const back = HUB.hashToState(HUB.stateToHash(st));
+    return back.q === st.q && back.hub === st.hub && back.sort === st.sort;
+  })());
+t("stateToHash encodes special chars + omits defaults",
+  HUB.stateToHash({ q: "a b&c", hub: "", sort: "az" }) === "#q=a%20b%26c" &&
+  HUB.stateToHash({ q: "", hub: "", sort: "az" }) === "");
+t("hashToState ignores unknown hub/sort values",
+  (() => { const s = HUB.hashToState("#hub=nope&sort=bogus&q=x"); return s.hub === "" && s.sort === "az" && s.q === "x"; })());
+t("hashToState tolerates empty hash", HUB.hashToState("").q === "" && HUB.hashToState("").sort === "az");
 const app2 = fs.readFileSync("js/app.js", "utf8");
 t("app wires finder (search + hub filter + surprise + copy link)",
   app2.includes("prodSearch") && app2.includes("hubFilter") && app2.includes("surpriseBtn") &&
@@ -103,6 +139,14 @@ const html2 = fs.readFileSync("index.html", "utf8");
 t("index has finder markup",
   /id="prodSearch"/.test(html2) && /id="hubFilter"/.test(html2) &&
   /id="surpriseBtn"/.test(html2) && /id="prodCount"/.test(html2));
+t("index has sort + saved-only controls",
+  /id="sortSel"/.test(html2) && /id="favOnlyBtn"/.test(html2));
+const app3 = fs.readFileSync("js/app.js", "utf8");
+t("app wires sort, hash sync and favorites",
+  app3.includes("sortSel") && app3.includes("favOnlyBtn") &&
+  app3.includes("sortProducts") && app3.includes("stateToHash") &&
+  app3.includes("hashToState") && app3.includes("toggleFav") &&
+  app3.includes("data-fav") && app3.includes("syncHash"));
 
 '
 [ $? -eq 0 ] && ok "node data assertions" || bad "node data assertions"
